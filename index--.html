@@ -130,7 +130,7 @@
 					element.rotation.z += (0.01);
 					
 				}); 
-				requestAnimationFrame( animate );
+				
 			   }
 			   
                 if ((n-elapsedTime) > 300) {
@@ -147,6 +147,7 @@
 				}
 
                 elapsedTime = n;
+				requestAnimationFrame( animate );
                 }
 
                /**
