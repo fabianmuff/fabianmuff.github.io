@@ -227,6 +227,9 @@
 			renderer = new THREE.WebGLRenderer();
 			renderer.setSize(window.innerWidth, window.innerHeight);
 
+			renderer.outputEncoding = THREE.sRGBEncoding;
+			renderer.shadowMap.enabled = true;
+
 			//add webxr support
 			document.body.appendChild(VRButton.createButton(renderer));
 			renderer.xr.enabled = true;
