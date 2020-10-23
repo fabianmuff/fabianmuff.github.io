@@ -127,7 +127,7 @@
 
 			//add plane for log
 			geometry = new THREE.PlaneBufferGeometry(0.5, 0.5);
-			material = new THREE.MeshBasicMaterial({ side: THREE.DoubleSide });
+			material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide });
 			log_plane = new THREE.Mesh(geometry, material);
 
 			updateTextureOfElement(log_plane);
@@ -303,7 +303,7 @@
 		//function to initialize the floor
 		function loadFloor() {
 			var groundGeometry = new THREE.PlaneBufferGeometry(40, 40, 10, 10);
-			var groundMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc });
+			var groundMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
 			var ground = new THREE.Mesh(groundGeometry, groundMaterial);
 			ground.rotation.x = Math.PI * - 0.5;
 			ground.name = 'Ground';
@@ -652,7 +652,7 @@
 				var color = new THREE.Color('black');
 
 				//define material
-				var matLite = new THREE.MeshBasicMaterial({
+				var matLite = new THREE.MeshPhongMaterial({
 					color: color,
 					transparent: false,
 					opacity: 0.4,
