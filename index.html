@@ -109,10 +109,7 @@
 
 			}
 
-			function animate() {
-
-				requestAnimationFrame( animate );
-
+			function update() {
 				for (var m=0, il=meshes.length; m<il; m++) {
 					//meshes[m].rotation.x += (0.01 + Math.random()/50);
 					//meshes[m].rotation.y += (0.01 + Math.random()/80);
@@ -140,6 +137,14 @@
 
                 elapsedTime = n;
                 }
+
+			}
+
+			function animate() {
+
+				requestAnimationFrame( animate );
+				update();
+				
 
                /**
                 
