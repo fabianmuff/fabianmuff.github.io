@@ -118,11 +118,9 @@
 					meshes[m].rotation.z += (0.01);
                 }
                
-               var d = new Date();
-               var n = d.getTime();
-               //alert(n + " " + elapsedTime);
+               
 
-                if ((n-elapsedTime) > 300) {
+			   renderer.setAnimationLoop( function () {
                     canvases.forEach(element => {
                     var dc = element.getContext("2d");
                     dc.fillStyle ="#FF0000";
@@ -134,9 +132,7 @@
                 for (var x=0, l=materials.length; x<l; x++) {
 					materials[x].map.needsUpdate = true;
 				}
-
-                elapsedTime = n;
-                }
+                });
 
 			}
 
