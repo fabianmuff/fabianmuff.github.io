@@ -125,10 +125,10 @@
 
 			   if ((n-elapsedTime) > 10) {
 				meshes.forEach(element => {
-			   		meshes[m].rotation.x += (0.1);
-					meshes[m].rotation.y += (0.1);
-					meshes[m].rotation.z += (0.1);
-				});
+					element.rotation.x += (0.01);
+					element.rotation.y += (0.01);
+					element.rotation.z += (0.01);
+				}); 
 			   }
 			   
                 if ((n-elapsedTime) > 300) {
