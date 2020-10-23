@@ -113,17 +113,17 @@
 
 				requestAnimationFrame( animate );
 			   
-				meshes.forEach(element => {
+				/* meshes.forEach(element => {
 					element.rotation.x += (0.01);
 					element.rotation.y += (0.01);
 					element.rotation.z += (0.01);
-				});
+				}); */
 
                var d = new Date();
                var n = d.getTime();
                //alert(n + " " + elapsedTime);
 
-                if ((n-elapsedTime) > 3000) {
+                if ((n-elapsedTime) > 300) {
                     canvases.forEach(element => {
                     var dc = element.getContext("2d");
                     dc.fillStyle ="#FF0000";
