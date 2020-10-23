@@ -111,7 +111,7 @@
 
 			function animate() {
 
-				requestAnimationFrame( animate );
+				//requestAnimationFrame( animate );
 			   
 				/* meshes.forEach(element => {
 					element.rotation.x += (0.01);
@@ -128,6 +128,7 @@
 					element.rotation.x += (0.01);
 					element.rotation.y += (0.01);
 					element.rotation.z += (0.01);
+					requestAnimationFrame( animate );
 				}); 
 			   }
 			   
@@ -145,6 +146,7 @@
 				}
 
                 elapsedTime = n;
+				requestAnimationFrame( animate );
                 }
 
                /**
