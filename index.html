@@ -109,18 +109,21 @@
 
 			}
 
-			function update() {
-				for (var m=0, il=meshes.length; m<il; m++) {
-					//meshes[m].rotation.x += (0.01 + Math.random()/50);
-					//meshes[m].rotation.y += (0.01 + Math.random()/80);
-                    meshes[m].rotation.x += (0.01);
-					meshes[m].rotation.y += (0.01);
-					meshes[m].rotation.z += (0.01);
-                }
-               
-               
+			function animate() {
 
-			   renderer.setAnimationLoop( function () {
+				requestAnimationFrame( animate );
+			   
+				meshes.forEach(element => {
+					element.rotation.x += (0.01);
+					element.rotation.y += (0.01);
+					element.rotation.z += (0.01);
+				});
+
+               var d = new Date();
+               var n = d.getTime();
+               //alert(n + " " + elapsedTime);
+
+                if ((n-elapsedTime) > 300) {
                     canvases.forEach(element => {
                     var dc = element.getContext("2d");
                     dc.fillStyle ="#FF0000";
@@ -132,15 +135,9 @@
                 for (var x=0, l=materials.length; x<l; x++) {
 					materials[x].map.needsUpdate = true;
 				}
-                });
 
-			}
-
-			function animate() {
-
-				requestAnimationFrame( animate );
-				update();
-				
+                elapsedTime = n;
+                }
 
                /**
                 
