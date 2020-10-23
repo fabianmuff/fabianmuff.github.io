@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js experiments</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+		<style>
+			#drawing-canvas {
+				position: absolute;
+				background-color: #000000;
+				top: 0px;
+				right: 0px;
+				z-index: 3000;
+				cursor: crosshair;
+				touch-action: none;
+			}
+		</style>
+	</head>
+	<body>
+
+		<div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> - webgl - canvas as a texture
+			<div>2click and draw in the white box</div>
+		</div>
+		<!--<canvas id="drawing-canvas" height="128" width="128" style="display:none;"></canvas>-->
+
+		<script type="module">
+
+			import * as THREE from '../three/build/three.module.js';
+
+			var camera, scene, renderer, mesh, material;
+			var drawStartPos = new THREE.Vector2();
+			var meshes = new Array();
+			var materials = new Array();
+            var canvases = new Array();
+            var elapsedTime=0;
+            var x = new Date();
+            elapsedTime = x.getTime();
+
+            var boxNumber=0;
+
+			init();
+			//setupCanvasDrawing();
+			animate();
+
+			function init() {
+
+				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.z = 500;
+
+				scene = new THREE.Scene();
+
+
+
+				for (var y = -300; y < 300; y += 60) {
+					for (var x = -300; x < 300; x += 60) {
+						var cnv = createCanvas();
+                        canvases.push(cnv);
+                        material = new THREE.MeshBasicMaterial();
+						material.map = new THREE.CanvasTexture( cnv);
+                        materials.push(material);
+						//mesh = new THREE.Mesh(new THREE.BoxBufferGeometry(30, 30, 30), material);
+						mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(30, 30, 30), material);
+						
+						//alert (mesh.position.x + " " + mesh.position.y);
+						mesh.position.x = x;
+						mesh.position.y = y;
+						scene.add(mesh);
+						meshes.push(mesh);
+					}
+				}
+				alert("No objects: " + meshes.length);
+
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( renderer.domElement );
+
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function createCanvas () {
+                boxNumber++;
+                var newCanvas = document.createElement("canvas");
+                newCanvas.setAttribute("width", "128");
+                newCanvas.setAttribute("height", "128");
+                newCanvas.setAttribute("style","display:none;");
+                var canvasContext = newCanvas.getContext("2d");
+                canvasContext.fillStyle = "#FF0000";
+                canvasContext.fillRect( 0, 0, 128, 128 );
+                canvasContext.fillStyle = "#FFFFFF";
+                canvasContext.font = "30px Arial";
+                canvasContext.fillText("Hello" + boxNumber, 10, 50);
+                document.body.appendChild(newCanvas);
+
+                return newCanvas;
+            }
+            
+           		
+
+			function onWindowResize() {
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+			}
+
+			function animate() {
+
+				//requestAnimationFrame( animate );
+			   
+				/* meshes.forEach(element => {
+					element.rotation.x += (0.01);
+					element.rotation.y += (0.01);
+					element.rotation.z += (0.01);
+				}); */
+
+               var d = new Date();
+               var n = d.getTime();
+               //alert(n + " " + elapsedTime);
+
+			   if ((n-elapsedTime) > 20) {
+				meshes.forEach(element => {
+					element.rotation.x += (0.01);
+					element.rotation.y += (0.01);
+					element.rotation.z += (0.01);
+					
+				}); 
+				requestAnimationFrame( animate );
+			   }
+			   
+                if ((n-elapsedTime) > 300) {
+                    canvases.forEach(element => {
+                    var dc = element.getContext("2d");
+                    dc.fillStyle ="#FF0000";
+                    dc.fillRect( 0, 0, 128, 128 );
+                    dc.fillStyle ="#FFFFFF";  
+                    dc.fillText(Math.floor(Math.random()*100), 10, 50);
+                });
+
+                for (var x=0, l=materials.length; x<l; x++) {
+					materials[x].map.needsUpdate = true;
+				}
+
+                elapsedTime = n;
+                }
+
+               /**
+                
+               
+                **/
+
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>
