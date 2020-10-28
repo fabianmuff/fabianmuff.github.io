@@ -31,6 +31,7 @@
 
 		import * as THREE from '../three/build/three.module.js';
 		import { VRButton } from '../three/examples/jsm/webxr/VRButton.js';
+		import { ARButton } from './jsm/webxr/ARButton.js';
 		import { GLTFLoader } from '../three/examples/jsm/loaders/GLTFLoader.js';
 		import { OrbitControls } from '../three/examples/jsm/controls/OrbitControls.js';
 		import { SVGLoader } from '../three/examples/jsm/loaders/SVGLoader.js';
@@ -233,6 +234,7 @@
 
 			//add webxr support
 			document.body.appendChild(VRButton.createButton(renderer));
+			document.body.appendChild( ARButton.createButton( renderer ) );
 			renderer.xr.enabled = true;
 
 			//add orbitControls
