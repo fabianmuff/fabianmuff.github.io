@@ -1077,6 +1077,9 @@
 		var GameLoop = function () {
 			requestAnimationFrame(GameLoop);
 
+			user.position.copy(camera.position);
+			
+
 			update();
 			render();
 
@@ -1095,6 +1098,7 @@
 			}
 
 			updateLines();
+			
 
 		};
 
