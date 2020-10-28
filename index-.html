@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>three.js vr - dragging</title>
+		<title>three.js ar - dragging</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 		<link type="text/css" rel="stylesheet" href="main.css">
@@ -9,7 +9,7 @@
 	<body>
 
 		<div id="info">
-			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> vr - dragging
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> ar - dragging
 		</div>
 
 		<script src="three/examples/js/vr/HelioWebXRPolyfill.js"></script>
@@ -18,7 +18,7 @@
 
 			import * as THREE from '../three/build/three.module.js';
 			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
-			import { VRButton } from './three/examples/jsm/webxr/VRButton.js';
+			import { ARButton } from './three/examples/jsm/webxr/ARButton.js';
 			import { XRControllerModelFactory } from './three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 			var container;
@@ -121,7 +121,7 @@
 				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
-				document.body.appendChild( VRButton.createButton( renderer ) );
+				document.body.appendChild( ARButton.createButton( renderer ) );
 
 				// controllers
 
