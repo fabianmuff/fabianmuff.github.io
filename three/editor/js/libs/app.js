@@ -1,8 +1,4 @@
 
-/**
- * @author mrdoob / http://mrdoob.com/
- */
-
 var APP = {
 
 	Player: function () {
@@ -10,9 +6,6 @@ var APP = {
 		var renderer = new THREE.WebGLRenderer( { antialias: true } );
 		renderer.setPixelRatio( window.devicePixelRatio );
 		renderer.outputEncoding = THREE.sRGBEncoding;
-
-		// HACK(mrdoob) Avoid Editor losing context on Play/Stop :/
-		renderer.forceContextLoss = function () {};
 
 		var loader = new THREE.ObjectLoader();
 		var camera, scene;
@@ -33,8 +26,12 @@ var APP = {
 
 			var project = json.project;
 
-			renderer.shadowMap.enabled = project.shadows === true;
-			renderer.xr.enabled = project.vr === true;
+			if ( project.vr !== undefined ) renderer.xr.enabled = project.vr;
+			if ( project.shadows !== undefined ) renderer.shadowMap.enabled = project.shadows;
+			if ( project.shadowType !== undefined ) renderer.shadowMap.type = project.shadowType;
+			if ( project.toneMapping !== undefined ) renderer.toneMapping = project.toneMapping;
+			if ( project.toneMappingExposure !== undefined ) renderer.toneMappingExposure = project.toneMappingExposure;
+			if ( project.physicallyCorrectLights !== undefined ) renderer.physicallyCorrectLights = project.physicallyCorrectLights;
 
 			this.setScene( loader.parse( json.scene ) );
 			this.setCamera( loader.parse( json.camera ) );
