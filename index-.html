@@ -18,7 +18,7 @@
 
 			import * as THREE from '../three/build/three.module.js';
 			import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
-			import { ARButton } from './three/examples/jsm/webxr/ARButton.js';
+			import { VRButton } from './three/examples/jsm/webxr/VRButton.js';
 			import { XRControllerModelFactory } from './three/examples/jsm/webxr/XRControllerModelFactory.js';
 
 			var container;
@@ -121,7 +121,7 @@
 				renderer.xr.enabled = true;
 				container.appendChild( renderer.domElement );
 
-				document.body.appendChild( ARButton.createButton( renderer ) );
+				document.body.appendChild( VRButton.createButton( renderer ) );
 
 				// controllers
 
