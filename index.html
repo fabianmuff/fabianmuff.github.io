@@ -29,6 +29,8 @@
 
 			import * as THREE from '../three/build/three.module.js';
 			import { ARButton } from '../three/examples/jsm/webxr/ARButton.js';
+			import { VRButton } from '../three/examples/jsm/webxr/VRButton.js';
+			import { OrbitControls } from '../three/examples/jsm/controls/OrbitControls.js';
 
 			var camera, scene, renderer, mesh, material;
 			var drawStartPos = new THREE.Vector2();
@@ -37,7 +39,9 @@
             var canvases = new Array();
             var elapsedTime=0;
             var x = new Date();
-            elapsedTime = x.getTime();
+			elapsedTime = x.getTime();
+			
+			var controls;
 
             var boxNumber=0;
 
@@ -47,31 +51,17 @@
 
 			function init() {
 
-				camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 2000 );
-				camera.position.z = 500;
+				camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 1, 2000 );
+				camera.position.z = 30;
+				camera.position.y = 10;
 
 				scene = new THREE.Scene();
 
 
 
-				for (var y = -300; y < 300; y += 60) {
-					for (var x = -300; x < 300; x += 60) {
-						var cnv = createCanvas();
-                        canvases.push(cnv);
-                        material = new THREE.MeshBasicMaterial();
-						material.map = new THREE.CanvasTexture( cnv);
-                        materials.push(material);
-						//mesh = new THREE.Mesh(new THREE.BoxBufferGeometry(30, 30, 30), material);
-						mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(3, 3, 3), material);
-						
-						//alert (mesh.position.x + " " + mesh.position.y);
-						mesh.position.x = x;
-						mesh.position.y = y;
-						scene.add(mesh);
-						meshes.push(mesh);
-					}
-				}
-				alert("No objects: " + meshes.length);
+				
+
+				
 
 				renderer = new THREE.WebGLRenderer( { antialias: true } );
 				renderer.setPixelRatio( window.devicePixelRatio );
@@ -79,12 +69,59 @@
 				document.body.appendChild( renderer.domElement );
 
 				document.body.appendChild( ARButton.createButton( renderer ) );
+				document.body.appendChild( VRButton.createButton( renderer ) );
 				renderer.xr.enabled = true;
+
+				//add orbitControls
+			controls = new OrbitControls(camera, renderer.domElement);
 
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
+
+				loadFloor();
+
+				scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
+
+				var light = new THREE.DirectionalLight( 0xffffff );
+				light.position.set( 0, 6, 0 );
+				// light.castShadow = true;
+				// light.shadow.camera.top = 2;
+				// light.shadow.camera.bottom = - 2;
+				// light.shadow.camera.right = 2;
+				// light.shadow.camera.left = - 2;
+				// light.shadow.mapSize.set( 4096, 4096 );
+				scene.add( light );
+
 			}
+
+
+			// -----------------------------------------------
+		// floor loader
+		//-----------------------------------------------
+
+		//function to initialize the floor
+		function loadFloor() {
+			var groundGeometry = new THREE.PlaneBufferGeometry(40, 40, 10, 10);
+			var groundMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
+			var ground = new THREE.Mesh(groundGeometry, groundMaterial);
+			ground.rotation.x = Math.PI * - 0.5;
+			ground.name = 'Ground';
+			scene.add(ground);
+
+			var textureLoader = new THREE.TextureLoader();
+			textureLoader.load('../three/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', function (map) {
+
+				map.wrapS = THREE.RepeatWrapping;
+				map.wrapT = THREE.RepeatWrapping;
+				map.anisotropy = 16;
+				map.repeat.set(4, 4);
+				groundMaterial.map = map;
+				groundMaterial.needsUpdate = true;
+
+
+			});
+		}
 
 			function createCanvas () {
                 boxNumber++;
@@ -115,52 +152,11 @@
 			}
 
 			function animate() {
-
-				//requestAnimationFrame( animate );
-			   
-				/* meshes.forEach(element => {
-					element.rotation.x += (0.01);
-					element.rotation.y += (0.01);
-					element.rotation.z += (0.01);
-				}); */
-
-               var d = new Date();
-               var n = d.getTime();
-               //alert(n + " " + elapsedTime);
-
-			   if ((n-elapsedTime) > 20) {
-				meshes.forEach(element => {
-					element.rotation.x += (0.01);
-					element.rotation.y += (0.01);
-					element.rotation.z += (0.01);
-					
-				}); 
 				
-			   }
-			   
-                if ((n-elapsedTime) > 300) {
-                    canvases.forEach(element => {
-                    var dc = element.getContext("2d");
-                    dc.fillStyle ="#FF0000";
-                    dc.fillRect( 0, 0, 128, 128 );
-                    dc.fillStyle ="#FFFFFF";  
-                    dc.fillText(Math.floor(Math.random()*100), 10, 50);
-                });
-
-                for (var x=0, l=materials.length; x<l; x++) {
-					materials[x].map.needsUpdate = true;
-				}
-
-                elapsedTime = n;
 				requestAnimationFrame( animate );
-                }
-
-               /**
-                
-               
-                **/
-
-
+				camera.position.z = 30;
+				camera.position.y = 10;
+			
 				renderer.render( scene, camera );
 
 			}
