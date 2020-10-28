@@ -4,7 +4,7 @@
 		<title>three.js ar - paint</title>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-		
+		<link type="text/css" rel="stylesheet" href="main.css">
 	</head>
 	<body>
 
@@ -15,14 +15,14 @@
 		<script type="module">
 
 			import * as THREE from '../three/build/three.module.js';
-			import { TubePainter } from '../three/examples/jsm/misc/TubePainter.js';
-			import { ARButton } from '../three/examples/jsm/webxr/ARButton.js';
+			import { TubePainter } from '../three/example/jsm/misc/TubePainter.js';
+			import { ARButton } from '../three/example/jsm/webxr/ARButton.js';
 
-			var container;
-			var camera, scene, renderer;
-			var controller, painter;
+			let container;
+			let camera, scene, renderer;
+			let controller, painter;
 
-			var cursor = new THREE.Vector3();
+			const cursor = new THREE.Vector3();
 
 			init();
 			animate();
@@ -50,7 +50,7 @@
 
 				// model
 
-				var light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
+				const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
 				light.position.set( 0, 1, 0 );
 				scene.add( light );
 
@@ -101,7 +101,7 @@
 
 			function handleController( controller ) {
 
-				var userData = controller.userData;
+				const userData = controller.userData;
 
 				cursor.set( 0, 0, - 0.2 ).applyMatrix4( controller.matrixWorld );
 
