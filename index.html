@@ -28,6 +28,7 @@
 		<script type="module">
 
 			import * as THREE from '../three/build/three.module.js';
+			import { ARButton } from '../three/examples/jsm/webxr/ARButton.js';
 
 			var camera, scene, renderer, mesh, material;
 			var drawStartPos = new THREE.Vector2();
@@ -53,15 +54,15 @@
 
 
 
-				for (var y = -300; y < 300; y += 60) {
-					for (var x = -300; x < 300; x += 60) {
+				for (var y = -30; y < 30; y += 6) {
+					for (var x = -30; x < 30; x += 6) {
 						var cnv = createCanvas();
                         canvases.push(cnv);
                         material = new THREE.MeshBasicMaterial();
 						material.map = new THREE.CanvasTexture( cnv);
                         materials.push(material);
 						//mesh = new THREE.Mesh(new THREE.BoxBufferGeometry(30, 30, 30), material);
-						mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(30, 30, 30), material);
+						mesh = new THREE.Mesh(new THREE.PlaneBufferGeometry(3, 3, 3), material);
 						
 						//alert (mesh.position.x + " " + mesh.position.y);
 						mesh.position.x = x;
@@ -76,6 +77,10 @@
 				renderer.setPixelRatio( window.devicePixelRatio );
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				document.body.appendChild( renderer.domElement );
+
+				document.body.appendChild( ARButton.createButton( renderer ) );
+				renderer.xr.enabled = true;
+
 
 				window.addEventListener( 'resize', onWindowResize, false );
 
