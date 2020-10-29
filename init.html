@@ -18,6 +18,9 @@
 <body>
 
     <script src="js/WebXRPolyfill.js"></script>
+    <script>
+        window.polyfill = new WebXRPolyfill();
+    </script>
     <script type="module">
 
         import * as THREE from '../three/build/three.module.js';
