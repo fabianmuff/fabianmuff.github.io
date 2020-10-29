@@ -86,6 +86,8 @@
 
             window.addEventListener('resize', onWindowResize, false);
 
+            let timerId = setInterval(() => update(), 10);
+
 
 
         }
@@ -101,16 +103,19 @@
 
         //
 
+        function update() {
+            cube.rotation.x += 0.005;
+            cube.rotation.y += 0.01;
+            cube.rotation.z += 0.03
+            cube.position.x += 0.001;
+        }
+
         function animate() {
 
 
             renderer.setAnimationLoop(render);
             requestAnimationFrame(animate);
-            cube.rotation.x += 0.005;
-            cube.rotation.y += 0.01;
-            cube.rotation.z += 0.03
-
-            cube.position.x += 0.001;
+            
             //cube.material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
 
 
