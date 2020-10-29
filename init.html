@@ -84,6 +84,30 @@
 
             //
 
+
+            var groundGeometry = new THREE.PlaneBufferGeometry(10, 10, 10, 10);
+			var groundMaterial = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
+			var ground = new THREE.Mesh(groundGeometry, groundMaterial);
+			
+			ground.name = 'Ground';
+            ground.position.x = 0;
+            ground.position.y = 0;
+            ground.position.z = -10;
+			scene.add(ground);
+
+            var textureLoader = new THREE.TextureLoader();
+			textureLoader.load('../three/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', function (map) {
+
+				map.wrapS = THREE.RepeatWrapping;
+				map.wrapT = THREE.RepeatWrapping;
+				map.anisotropy = 16;
+				map.repeat.set(4, 4);
+				groundMaterial.map = map;
+				groundMaterial.needsUpdate = true;
+
+
+			});
+
             window.addEventListener('resize', onWindowResize, false);
 
             let timerId = setInterval(() => update(), 10);
