@@ -26,7 +26,7 @@
 
         let camera, scene, renderer;
         let controller;
-        var geometry, material;
+        var geometry, material, cube;
 
         init();
         animate();
@@ -61,7 +61,7 @@
 
             geometry = new THREE.BoxGeometry();
             material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
-            const cube = new THREE.Mesh(geometry, material);
+            cube = new THREE.Mesh(geometry, material);
             cube.position.z = -3;
             scene.add(cube);
 
@@ -103,12 +103,20 @@
 
         function animate() {
 
+            
             renderer.setAnimationLoop(render);
+            requestAnimationFrame( animate );
+            cube.rotation.x += 0.005;
+			cube.rotation.y += 0.01;
+            cube.rotation.z += 0.03
+            cube.material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
+            
 
         }
 
         function render() {
 
+            
             renderer.render(scene, camera);
 
         }
