@@ -114,7 +114,8 @@
 
 
             renderer.setAnimationLoop(render);
-            requestAnimationFrame(animate);
+            //requestAnimationFrame(animate);
+            
             
             //cube.material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
 
@@ -122,10 +123,7 @@
         }
 
         function render() {
-
-
             renderer.render(scene, camera);
-
         }
 
 
