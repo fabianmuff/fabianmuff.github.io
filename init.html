@@ -42,11 +42,9 @@
         const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
         const cube = new THREE.Mesh(geometry, material);
         scene.add(cube);
-        cube.position.x = camera.position.x;
-        cube.position.y = camera.position.y;
-        cube.position.z = camera.position.z - 3;
 
- 
+
+
         camera.position.z = 5;
 
 
@@ -73,6 +71,11 @@
         function update() {
             cube.rotation.x += 0.01;
             cube.rotation.y += 0.01;
+
+            cube.position.x = camera.position.x;
+            cube.position.y = camera.position.y;
+            cube.position.z = camera.position.z - 3;
+
         }
 
 
