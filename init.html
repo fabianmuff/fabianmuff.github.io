@@ -42,6 +42,10 @@
         const material = new THREE.MeshPhongMaterial({ color: 0x00ff00 });
         const cube = new THREE.Mesh(geometry, material);
         scene.add(cube);
+        cube.position.x = camera.position.x;
+        cube.position.y = camera.position.y;
+        cube.position.z = camera.position.z - 3;
+
 
         camera.position.z = 5;
 
