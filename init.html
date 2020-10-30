@@ -46,6 +46,8 @@
         init();
         animate();
 
+        setInterval(function(){ update(); }, 300);
+
         function init() {
 
             const container = document.createElement('div');
@@ -184,28 +186,21 @@
 
         function update() {
 
-            //tempMatrix.getInverse(controller1.matrixWorld);
+          
 
-            var object = cube;
-            object.matrix.premultiply(tempMatrix);
-            object.matrix.decompose(object.position, object.quaternion, object.scale);
+            
 
-            object.rotation.x += 0.02;
-            object.rotation.y += 0.01;
-            object.rotation.z += 0.03
-            //object.position.x += 0.001;
-
-            //controller.add(object);
+            cube.rotation.x += 0.002;
+            cube.rotation.y += 0.001;
+            cube.rotation.z += 0.003
+            
         }
 
         function animate() {
 
 
             renderer.setAnimationLoop(render);
-            //requestAnimationFrame(animate);
-
-
-            //cube.material = new THREE.MeshPhongMaterial({ color: 0xffffff * Math.random() });
+            requestAnimationFrame(animate);
 
 
         }
