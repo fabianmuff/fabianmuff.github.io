@@ -1,0 +1,1 @@
+{"version":"0.2.0","configurations":[{"name":"Debug in HoloJs","type":"node","request":"launch","cwd":"${workspaceFolder}","runtimeExecutable":"C:\\Users\\fabia\\Documents\\GitHub\\spin-3.1-win-x64\\spin.exe","runtimeArgs":["run","--path","first-app.json","--debug"],"port":9229,"protocol":"inspector"}]}
