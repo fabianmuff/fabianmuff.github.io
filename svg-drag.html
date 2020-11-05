@@ -1,776 +1,198 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+	<title>three.js ar - dragging</title>
 	<meta charset="utf-8">
-	<style>
-		body {
-			margin: 0;
-			overflow: hidden;
-		}
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-		#container {}
-	</style>
 </head>
 
 <body>
-	<div id="container"></div>
-	<script src="three/build/three.js"></script>
-	<script src="js/leap-1.0.0.js"></script>
-	<script src="js/leap-plugins-0.1.12.js"></script>
-	<script src="js/leap-widgets-0.1.0.js"></script>
-	<script src="js/VRKeyboard.js"></script>
-	<script src="js/keyboard.js"></script>
-	<script src="js/stats.min.js"></script>
 
+	<div id="info">
+		<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> ar - dragging
+	</div>
 
-
-
-
+	<script src="three/examples/js/vr/HelioWebXRPolyfill.js"></script>
 
 	<script type="module">
 
 		import * as THREE from '../three/build/three.module.js';
-		//import { VRButton } from '../three/examples/jsm/webxr/VRButton.js';
-		import { ARButton } from '../three/examples/jsm/webxr/ARButton.js';
-		import { GLTFLoader } from '../three/examples/jsm/loaders/GLTFLoader.js';
-		import { OrbitControls } from '../three/examples/jsm/controls/OrbitControls.js';
+		import { OrbitControls } from './three/examples/jsm/controls/OrbitControls.js';
+		import { ARButton } from './three/examples/jsm/webxr/ARButton.js';
+		import { XRControllerModelFactory } from './three/examples/jsm/webxr/XRControllerModelFactory.js';
 		import { SVGLoader } from '../three/examples/jsm/loaders/SVGLoader.js';
-		import { XRControllerModelFactory } from '../three/examples/jsm/webxr/XRControllerModelFactory.js';
 
-
-		import "../js/annyang.min.js";
-
-		//--------------------
-		//Global Variables
-		//--------------------
-
+		var container;
 		var camera, scene, renderer;
-		var geometry, material, mesh;
-		var controls;
-		var stats;
-		var user;
-		var raycaster;
-		var mouse = { x: 0, y: 0 };
-		var last = Date.now();
-		var keys = [];
-		const keyboard3d = new THREE.Object3D();
-		var log_plane;
-		var push_plane;
-		var push_plane_on;
-		var push_plane_next;
-		var push_plane_prev;
-		var keyboard_visible = true;
-		var allObjects = [];
-		var selectedObj = [];
-		var selectedObj_number = 0;
-		var textureLoader;
-		var objects;
-
-		var HighlightColor = new THREE.Color(0xff0000);
-		var StandardColor = new THREE.Color('white');
-
-		//this is the string for one line in the log
-		var string = "";
-
-		//variable for the performance.now() time
-		var clock = 0;
-
-		//controller variables
-		var raycasterForController;
-		var tempMatrix;
-		var controller, controller1, controller2;
+		var controller1, controller2;
 		var controllerGrip1, controllerGrip2;
-		var intersected = [];
-		var group;
-		var controllerModelFactory;
-		var line;
-		var intersection, intersections;
-		var object;
 
-		//array to store the values to update lines
-		var lines = [];
-		var points = [];
+		var raycaster, intersected = [];
+		var tempMatrix = new THREE.Matrix4();
 
-		//init Canvas
-		//get information
-		var canvas;
-		canvas = document.getElementById('myCanvas');
-		canvas.width = 2048;//horizontal resolution (?) - increase for better looking text
-		canvas.height = 2048;//vertical resolution (?) - increase for better looking text
-		canvas.style.width = canvas.width;//actual width of canvas
-		canvas.style.height = canvas.height;//actual height of canvas
-		var ctx = canvas.getContext('2d');
+		var controls, group;
 
-		//array with all log elements to draw
-		var canvasArray = [];
+		var mesh;
 
-
-		//----------------------------------------------------
-		//end of global variables
-		//----------------------------------------------------
-
-
-
-
-
-		initStandardScene();
 		init();
 		animate();
 
-		setTimeout(function () { printHelp(); }, 3000);
-
-		var svg = document.getElementById("svgContainer").querySelector("svg");
-        var svgData = (new XMLSerializer()).serializeToString(svg);
-
-        var canvas = document.createElement("canvas");
-        var svgSize = svg.getBoundingClientRect();
-        canvas.width = svgSize.width;
-        canvas.height = svgSize.height;
-        
-
-
-        var ctx = canvas.getContext("2d");
-
-        var img = document.createElement("img");
-        img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(svgData))));
-
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0);
-
-            var texture = new THREE.Texture(canvas);
-            texture.needsUpdate = true;
-
-            const geometry = new THREE.PlaneGeometry(50, 200, 320);
-            var material = new THREE.MeshBasicMaterial({ map: texture });
-            material.map.minFilter = THREE.LinearFilter;
-            mesh = new THREE.Mesh(geometry, material);
-            mesh.position.x = 0;
-            mesh.position.y = 0;
-            mesh.position.z = 0;
-
-			scene.add(mesh);
-			
-        };
-
-
-
-
-
-		//initialize specific project
 		function init() {
 
+			container = document.createElement('div');
+			document.body.appendChild(container);
 
-			//add plane for log
-			geometry = new THREE.PlaneBufferGeometry(0.5, 0.5);
-			material = new THREE.MeshPhongMaterial({ side: THREE.DoubleSide });
-			log_plane = new THREE.Mesh(geometry, material);
+			scene = new THREE.Scene();
+			// scene.background = new THREE.Color( 0x808080 );
 
-			updateTextureOfElement(log_plane);
-			//camera.add(log_plane);
-			log_plane.position.set(0.20, 0.02, -0.4);
-			log_plane.scale.set(0.5, 0.5, 0.5);
-			//log_plane.rotation.x =+ 0.2;
-			//---------------------------------------------------------------------------
+			camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
+			camera.position.set(0, 1.6, 3);
 
+			controls = new OrbitControls(camera, container);
+			controls.target.set(0, 1.6, 0);
+			controls.update();
 
-			
+			var geometry = new THREE.PlaneBufferGeometry(4, 4);
+			var material = new THREE.MeshStandardMaterial({
+				color: 0xeeeeee,
+				roughness: 1.0,
+				metalness: 0.0
+			});
+			var floor = new THREE.Mesh(geometry, material);
+			floor.rotation.x = - Math.PI / 2;
+			floor.receiveShadow = true;
+			//scene.add( floor );
 
-			//add stats window to ckeck performance
-			var container = document.getElementById('container');
-			container.appendChild(renderer.domElement);
-			stats = new Stats();
-			stats.domElement.style.position = 'absolute';
-			stats.domElement.style.top = '0px';
-			document.body.appendChild(stats.domElement);
+			scene.add(new THREE.HemisphereLight(0x808080, 0x606060));
 
-			resize();
-
-
-			//init controllers-----------------------------------------
+			var light = new THREE.DirectionalLight(0xffffff);
+			light.position.set(0, 6, 0);
+			// light.castShadow = true;
+			// light.shadow.camera.top = 2;
+			// light.shadow.camera.bottom = - 2;
+			// light.shadow.camera.right = 2;
+			// light.shadow.camera.left = - 2;
+			// light.shadow.mapSize.set( 4096, 4096 );
+			scene.add(light);
 
 			group = new THREE.Group();
-			user.add(group);
+			scene.add(group);
 
-			//init controller1 and add to user
+
+
+			//
+
+			renderer = new THREE.WebGLRenderer({ antialias: true });
+			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setSize(window.innerWidth, window.innerHeight);
+			renderer.outputEncoding = THREE.sRGBEncoding;
+			renderer.shadowMap.enabled = true;
+			renderer.xr.enabled = true;
+			container.appendChild(renderer.domElement);
+
+			document.body.appendChild(ARButton.createButton(renderer));
+
+			// controllers
+
 			controller1 = renderer.xr.getController(0);
 			controller1.addEventListener('selectstart', onSelectStart);
 			controller1.addEventListener('selectend', onSelectEnd);
-			user.add(controller1);
+			scene.add(controller1);
 
-			//init controller2 and add to user
 			controller2 = renderer.xr.getController(1);
 			controller2.addEventListener('selectstart', onSelectStart);
 			controller2.addEventListener('selectend', onSelectEnd);
-			user.add(controller2);
+			scene.add(controller2);
 
-			controllerModelFactory = new XRControllerModelFactory();
+			var controllerModelFactory = new XRControllerModelFactory();
 
-			//add visual representation of controller 1 to scene
 			controllerGrip1 = renderer.xr.getControllerGrip(0);
 			controllerGrip1.add(controllerModelFactory.createControllerModel(controllerGrip1));
-			user.add(controllerGrip1);
+			scene.add(controllerGrip1);
 
-			//add visual representation of controller 2 to scene
 			controllerGrip2 = renderer.xr.getControllerGrip(1);
 			controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
-			user.add(controllerGrip2);
+			scene.add(controllerGrip2);
 
-			//create vector for raycaster line
-			geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, - 100)]);
-			line = new THREE.Line(geometry);
+			//
+
+			var geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, - 1)]);
+
+			var line = new THREE.Line(geometry);
 			line.name = 'line';
 			line.scale.z = 5;
 
-			//add raycaster lines to controllers
 			controller1.add(line.clone());
 			controller2.add(line.clone());
 
-			raycasterForController = new THREE.Raycaster();
-			tempMatrix = new THREE.Matrix4();
+			raycaster = new THREE.Raycaster();
 
+			//
 
-			//end of controller init----------------------
-
-		}
-
-
-		//initialize the standard for all projects
-		function initStandardScene() {
-
-			scene = new THREE.Scene();
-
-			// add milkyWay
-			var background = new THREE.CubeTextureLoader()
-				.setPath('../three/examples/textures/cube/MilkyWay/')
-				.load(['dark-s_px.jpg', 'dark-s_nx.jpg', 'dark-s_py.jpg', 'dark-s_ny.jpg', 'dark-s_pz.jpg', 'dark-s_nz.jpg']);
-
-			//scene.background = background;
-
-
-			//user needed for VR Camera
-			user = new THREE.Group();
-			user.position.set(0, 8, 30);
-			camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-			camera.position.set(0, 8, 30);
-			camera.lookAt(scene.position);
-
-			//add camera to user and user to scene
-			user.add(camera);
-			scene.add(user);
-
-			//define renderer
-			renderer = new THREE.WebGLRenderer();
-			renderer.setSize(window.innerWidth, window.innerHeight);
-
-			renderer.outputEncoding = THREE.sRGBEncoding;
-			renderer.shadowMap.enabled = true;
-
-			//add webxr support
-			//document.body.appendChild(VRButton.createButton(renderer));
-			document.body.appendChild( ARButton.createButton( renderer ) );
-			renderer.xr.enabled = true;
-
-			//add orbitControls
-			//controls = new OrbitControls(camera, renderer.domElement);
-
-
-			//loads the floor
-			//loadFloor();
-
-			//loads gltf objects
-			loadGLTFObject('../models/entity.glb', 10, 5, 0, "Entity 1");
-			loadGLTFObject('../models/relation.glb', 0, 5, 0, "Relation 1");
-			loadGLTFObject('../models/entity.glb', -10, 5, 0, "Entity 2");
-			loadGLTFObject('../models/attribute.glb', -17, 5, 0, "Attribute 1");
-			loadGLTFObject('../models/attribute.glb', -10, 8, 0, "Attribute 2");
-
-
-
-
-
-
-			// -----------------------------------------------
-			// lights
-			//-----------------------------------------------
-			var light = new THREE.PointLight(0xffffff);
-			light.position.set(0, 190, 80);
-			scene.add(light);
-
-			var light1 = new THREE.PointLight(0xffffff, 2, 50);
-			light1.position.set(camera.position);
-			light1.position.z = light1.position.z + 3;
-			scene.add(light1);
-
-			var light2 = new THREE.PointLight(0xffffff, 2, 50);
-			light2.position.x = 0;
-			light2.position.y = 0
-			light2.position.z = 16;
-			scene.add(light2);
-
-			var ambience = new THREE.AmbientLight(0x666666);
-			scene.add(ambience);
-
-
-		}
-		// end of init -----------------------------------------
-
-
-
-		// -----------------------------------------------
-		// function for resize
-		//-----------------------------------------------
-		function resize() {
 			window.addEventListener('resize', onWindowResize, false);
 
-			function onWindowResize() {
 
-				camera.aspect = window.innerWidth / window.innerHeight;
-				camera.updateProjectionMatrix();
+			//init svg
 
-				renderer.setSize(window.innerWidth, window.innerHeight);
-			}
-		}
+			var svg = document.getElementById("svgContainer").querySelector("svg");
+			var svgData = (new XMLSerializer()).serializeToString(svg);
 
-
-		// -----------------------------------------------
-		// floor loader
-		//-----------------------------------------------
-
-		//function to initialize the floor
-		function loadFloor() {
-			var groundGeometry = new THREE.PlaneBufferGeometry(40, 40, 10, 10);
-			var groundMaterial = new THREE.MeshPhongMaterial({ color: 0xcccccc });
-			var ground = new THREE.Mesh(groundGeometry, groundMaterial);
-			ground.rotation.x = Math.PI * - 0.5;
-			ground.name = 'Ground';
-			scene.add(ground);
-
-			var textureLoader = new THREE.TextureLoader();
-			textureLoader.load('../three/examples/textures/floors/FloorsCheckerboard_S_Diffuse.jpg', function (map) {
-
-				map.wrapS = THREE.RepeatWrapping;
-				map.wrapT = THREE.RepeatWrapping;
-				map.anisotropy = 16;
-				map.repeat.set(4, 4);
-				groundMaterial.map = map;
-				groundMaterial.needsUpdate = true;
-
-
-			});
-		}
-
-
-		// -----------------------------------------------
-		// gltf loader
-		//-----------------------------------------------
-
-		function loadGLTFObject(path, x, y, z, name) {
-			var GLTFloader = new GLTFLoader();
-
-			//GLTFloader.load('models/duck.gltf', handle_load);
-			GLTFloader.load(path, handle_load);
-
-
-			//GLTF loader function
-			function handle_load(gltf) {
-				var objects = gltf.scene.children;
-				var theObject;
-				for (var i = 0; i < objects.length; i++) {
-					theObject = objects[i];
-					console.log(theObject);
-
-					//add object to scene
-					theObject.position.x = x;
-					theObject.position.y = y;
-					theObject.position.z = z;
-
-					theObject.name = name;
-
-					//scene.add(theObject);
-					theObject.lookAt(user.position);
+			var canvas = document.createElement("canvas");
+			var svgSize = svg.getBoundingClientRect();
+			canvas.width = svgSize.width;
+			canvas.height = svgSize.height;
 
 
 
+			var ctx = canvas.getContext("2d");
 
+			var img = document.createElement("img");
+			img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(svgData))));
 
-					//push to array
-					allObjects.push(theObject);
-					console.log('added obj: ' + theObject.name + 'to array allObjects[]');
-					console.log('added obj: ' + theObject.name + ' to scene');
-					//writeStringToCanvas('added obj: ' + theObject.name + ' to scene');
+			img.onload = function () {
+				ctx.drawImage(img, 0, 0);
 
-					selectedObj[0] = theObject;
-					setName(theObject.name, theObject);
+				var texture = new THREE.Texture(canvas);
+				texture.needsUpdate = true;
 
+				const geometry = new THREE.PlaneGeometry(50, 200, 320);
+				var material = new THREE.MeshBasicMaterial({ map: texture });
+				material.map.minFilter = THREE.LinearFilter;
+				mesh = new THREE.Mesh(geometry, material);
+				mesh.position.x = 0;
+				mesh.position.y = 0;
+				mesh.position.z = 0;
 
-					var box = new THREE.BoxHelper(theObject, 0xffff00);
-					//scene.add( box );
+				scene.add(mesh);
 
-
-				}
-			}
-		}
-
-
-		//-----------------------------------------------------------------------------
-		// function to load Entity-Object
-		//-----------------------------------------------------------------------------
-		function insertEntity() {
-			loadGLTFObject('../models/entity.glb', 0, 10, 0, "Entity");
-		}
-
-		//-----------------------------------------------------------------------------
-		// function to load Relation-Object
-		//-----------------------------------------------------------------------------
-		function insertRelation() {
-			loadGLTFObject('../models/relation.glb', 0, 10, 0, "Relation");
-		}
-
-		//-----------------------------------------------------------------------------
-		// function to load Attribute-Object
-		//-----------------------------------------------------------------------------
-		function insertAttribute() {
-			loadGLTFObject('../models/attribute.glb', 0, 10, 0, "Attribute");
-		}
-
-		//-----------------------------------------------------------------------------
-		// function to delete an object
-		//-----------------------------------------------------------------------------
-		function deleteObject() {
-			for (var i = 0; i < lines.length; i++) {
-
-				//if line with this object exists, delete it
-				if (lines[i][1] == selectedObj[0] || lines[i][2] == selectedObj[0]) {
-					//delete line
-					try {
-						scene.remove(lines[i][0]);
-						lines[i].pop(2);
-						lines[i].pop(1);
-						lines[i].pop(0);
-						lines[i] = undefined;
-
-
-					}
-					catch{ }
-				}
-			}
-
-			//delete object from allObjects list
-			for (var j = 0; j < allObjects.length; j++) {
-				if (allObjects[j] == selectedObj[0]) {
-					allObjects.splice(j, 1);
-					j = 100;
-				}
-			}
-
-			//remove object from scene
-			scene.remove(selectedObj[0]);
-			selectedObj = [];
-			console.log(allObjects);
-		}
-
-		//------------------------------------------------------------------------------
-		// LOG section  
-		//------------------------------------------------------------------------------
-
-		//-----------------------------------------------------------------------------
-		// function to update the texture for the canvas
-		//-----------------------------------------------------------------------------
-		function updateTextureOfElement(object) {
-
-			textureLoader = new THREE.TextureLoader();
-			textureLoader.load(document.getElementById('myCanvas').toDataURL("image/png", 1.0), function (map) {
-
-				map.wrapS = THREE.RepeatWrapping;
-				map.wrapT = THREE.RepeatWrapping;
-
-				object.material.map = map;
-				object.material.needsUpdate = true;
-			});
-		}
-
-
-		//-----------------------------------------------------------------------------
-		// writes a string to the log canvas 
-		//-----------------------------------------------------------------------------
-		function writeStringToCanvas(stringToWrite) {
-
-			// function init
-			ctx = canvas.getContext('2d');
-			canvasArray.push(stringToWrite);
-			ctx.fillStyle = "red"; // set stroke color to red
-			ctx.font = "70px Unknown Font, sans-serif"; //"12px Georgia";
-
-			if (canvas.getContext) {
-				var y = 100;
-
-				//clear canvas
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-				//draw all elements if array is < 10
-				if (canvasArray.length < 10) {
-					for (var i = 0; i < canvasArray.length; i++) {
-						//write to canvas
-						ctx.fillText(canvasArray[i], 10, y);
-						y = y + 150;
-					}
-				}
-				//draw last 10 elements if array >= 10
-				else if (canvasArray.length >= 10) {
-					for (var i = canvasArray.length - 10; i < canvasArray.length; i++) {
-						//write to canvas
-						ctx.fillText(canvasArray[i], 10, y);
-						y = y + 150;
-					}
-				}
-			}
-
-			//update texture of plane
-			//takes the weburl of the canvas
-			updateTextureOfElement(log_plane);
-		}
-
-
-		//-----------------------------------------------------------------------------
-		// function to add a character at the same line 
-		//adds the character in argument to the line in the log
-		//this function is called when you press a key on the keyboard
-		//-----------------------------------------------------------------------------
-		function writeStringToCanvasOnSameLine(charToAdd) {
-
-			//function init
-			ctx = canvas.getContext('2d');
-			ctx.fillStyle = "red"; // set stroke color to red
-			ctx.font = "70px Unknown Font, sans-serif"; //"12px Georgia";
-
-			//if there is already a character in the element
-			if (canvasArray[canvasArray.lengt] != undefined) {
-				var lastElement = canvasArray[canvasArray.lengt] + charToAdd;
-			}
-			//if no character in element
-			else {
-				var lastElement = charToAdd;
-			}
-
-			//pop last element in array and pushes the new element with added character
-			canvasArray.pop(canvasArray[canvasArray.length]);
-			canvasArray.push(lastElement);
-
-
-			if (canvas.getContext) {
-				var y = 100;
-
-				//clear canvas
-				ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-				//draw last 10 elements if array is >= 10
-				if (canvasArray.length >= 10) {
-					for (var i = canvasArray.length - 10; i < canvasArray.length; i++) {
-						//write to canvas
-						ctx.fillText(canvasArray[i], 10, y);
-						y = y + 150;
-					}
-				}
-
-				//draw canvas if array <10
-				else if (canvasArray.length < 10) {
-					for (var i = 0; i < canvasArray.length; i++) {
-						//write to canvas
-						ctx.fillText(canvasArray[i], 10, y);
-						y = y + 150;
-					}
-				}
-
-
-			}
-
-			//update texture of plane -- takes the weburl of the canvas
-			updateTextureOfElement(log_plane);
+			};
 
 		}
 
-		//end of log section -------------------------------------------------------
+		function onWindowResize() {
 
+			camera.aspect = window.innerWidth / window.innerHeight;
+			camera.updateProjectionMatrix();
 
-
-
-
-
-		//--------------------------------------------------
-		// function to output a sound to the speaker
-		//--------------------------------------------------
-		function beep() {
-			var snd = new Audio("data:audio/wav;base64,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qJrx4KOQjahZxWbcZgztj2c49nKmkId44S71j0c8eV9yDK6uPRzx5X18eDvjvQ6yKo9ZSS6l//8elePK/Lf//IInrOF/FvDoADYAGBMGb7FtErm5MXMlmPAJQVgWta7Zx2go+8xJ0UiCb8LHHdftWyLJE0QIAIsI+UbXu67dZMjmgDGCGl1H+vpF4NSDckSIkk7Vd+sxEhBQMRU8j/12UIRhzSaUdQ+rQU5kGeFxm+hb1oh6pWWmv3uvmReDl0UnvtapVaIzo1jZbf/pD6ElLqSX+rUmOQNpJFa/r+sa4e/pBlAABoAAAAA3CUgShLdGIxsY7AUABPRrgCABdDuQ5GC7DqPQCgbbJUAoRSUj+NIEig0YfyWUho1VBBBA//uQZB4ABZx5zfMakeAAAAmwAAAAF5F3P0w9GtAAACfAAAAAwLhMDmAYWMgVEG1U0FIGCBgXBXAtfMH10000EEEEEECUBYln03TTTdNBDZopopYvrTTdNa325mImNg3TTPV9q3pmY0xoO6bv3r00y+IDGid/9aaaZTGMuj9mpu9Mpio1dXrr5HERTZSmqU36A3CumzN/9Robv/Xx4v9ijkSRSNLQhAWumap82WRSBUqXStV/YcS+XVLnSS+WLDroqArFkMEsAS+eWmrUzrO0oEmE40RlMZ5+ODIkAyKAGUwZ3mVKmcamcJnMW26MRPgUw6j+LkhyHGVGYjSUUKNpuJUQoOIAyDvEyG8S5yfK6dhZc0Tx1KI/gviKL6qvvFs1+bWtaz58uUNnryq6kt5RzOCkPWlVqVX2a/EEBUdU1KrXLf40GoiiFXK///qpoiDXrOgqDR38JB0bw7SoL+ZB9o1RCkQjQ2CBYZKd/+VJxZRRZlqSkKiws0WFxUyCwsKiMy7hUVFhIaCrNQsKkTIsLivwKKigsj8XYlwt/WKi2N4d//uQRCSAAjURNIHpMZBGYiaQPSYyAAABLAAAAAAAACWAAAAApUF/Mg+0aohSIRobBAsMlO//Kk4soosy1JSFRYWaLC4qZBYWFRGZdwqKiwkNBVmoWFSJkWFxX4FFRQWR+LsS4W/rFRb/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////VEFHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAU291bmRib3kuZGUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAMjAwNGh0dHA6Ly93d3cuc291bmRib3kuZGUAAAAAAAAAACU=");
-			snd.play();
-		}
-
-
-
-
-		//------------------------------------------------------------------------------
-		// text label
-		//------------------------------------------------------------------------------
-
-		//------------------------------------------------------------------------------
-		//function to set the name of the selected object
-		//------------------------------------------------------------------------------
-
-		function setName(name, object) {
-			console.log("object = " + object)
-			updateTextInGroup(object, name);
-
-			//reset color before empty
-			resetColorOfObjects();
-
-			//selectedObj = [];
-			render();
-
+			renderer.setSize(window.innerWidth, window.innerHeight);
 
 		}
-
-
-		//-----------------------------------------------------------------------------
-		//function update Text in Group used in SetName
-		//-----------------------------------------------------------------------------
-
-		function updateTextInGroup(selectedObj, textToAdd) {
-
-			//remove old text if one is there
-			try {
-				console.log(selectedObj);
-				selectedObj.children.forEach(element => {
-					selectedObj.remove(element);
-					element.dispose();
-					console.log("disposed");
-				});
-			}
-			catch { console.log('not text to delet'); }
-
-			//add new text
-			console.log(selectedObj.geometry.boundingSphere.radius);
-			addTextToGroup(selectedObj, textToAdd, 0.5, 0.11);
-
-			// emty list
-			selectedObj = [];
-
-		}
-
-
-		//-----------------------------------------------------------------------------
-		//function addTextToGroup used in updateTextInGroup
-		//-----------------------------------------------------------------------------
-
-		//function to add a text to an object
-		// args: an object to get the position of the text, a string which represents the text, a font size
-		function addTextToGroup(selectedObj, textToAdd, givenSize, givenHeight) {
-
-			//set new name
-			selectedObj.name = textToAdd;
-
-			var fontLoader = new THREE.FontLoader();
-
-			fontLoader.load('three/examples/fonts/helvetiker_regular.typeface.json', function (font) {
-
-				//define geometry
-				var geometry = new THREE.TextBufferGeometry(textToAdd, {
-					font: font,
-					size: givenSize,
-					height: givenHeight,
-					curveSegments: 12,
-					bevelEnabled: false,
-
-				});
-
-				//rotate by 180 degree
-				//geometry.rotateY(3.14159);
-
-				var color = new THREE.Color('black');
-
-				//define material
-				var matLite = new THREE.MeshPhongMaterial({
-					color: color,
-					transparent: false,
-					opacity: 0.4,
-					side: THREE.DoubleSide
-				});
-
-
-				geometry.computeBoundingBox();
-				geometry.computeVertexNormals();
-
-				selectedObj.geometry.computeBoundingBox();
-				selectedObj.geometry.computeVertexNormals();
-
-				var centerOffset = 0.5 * (geometry.boundingBox.max.x - geometry.boundingBox.min.x);
-				var centerOffsetSelectedObj = 0.5 * (selectedObj.geometry.boundingBox.max.z - selectedObj.geometry.boundingBox.min.z);
-				var centerOffsetSelectedObjY = 0.5 * (geometry.boundingBox.max.y - geometry.boundingBox.min.y);
-				// add text to object
-				var text = new THREE.Mesh(geometry, matLite);
-
-
-				//add text to parent object
-				selectedObj.add(text);
-				console.log('added text to selected obj: ' + selectedObj.uuid);
-
-				// set position of text
-				text.position.x = - centerOffset;
-				text.position.z = centerOffsetSelectedObj + 0.01;
-				text.position.y = - centerOffsetSelectedObjY
-
-
-			});
-
-			console.log('name of object \'' + selectedObj.name + '\' set to ' + textToAdd);
-			writeStringToCanvas(('name of object \'' + selectedObj.name + '\' set to ' + textToAdd));
-
-			//reset color before empty
-			resetColorOfObjects();
-		}
-
-
-		//----------------------------------------------------------------------------
-		//function to reset color of selected object
-		//----------------------------------------------------------------------------
-		function resetColorOfObjects() {
-
-			//for each element in array 'selectedObj' reset the color to default
-			for (var i = 0; i < allObjects.length; i++) {
-
-				try {
-					allObjects[i].material.color = StandardColor;
-				}
-				catch{ console.log('error on  color reset on object ' + allObjects[i]) }
-				finally { }
-
-			}
-		}
-		//end of text label section --------------------------------------------------
-
-
-		//----------------------------------------------------------------------------
-		//controller functions
-		//----------------------------------------------------------------------------
 
 		function onSelectStart(event) {
 
-			controller = event.target;
+			var controller = event.target;
 
-			intersections = getIntersections(controller);
+			var intersections = getIntersections(controller);
 
 			if (intersections.length > 0) {
 
-				intersection = intersections[0];
-
-				//add to list with selected objects -- at beginning
-				selectedObj.unshift(scene.getObjectById(intersections[0].object.id, true));
-				console.log(scene.getObjectById(intersections[0].object.id, true));
-
-				//update color of selected
-				updateColorOfSelectedObject();
+				var intersection = intersections[0];
 
 				tempMatrix.getInverse(controller.matrixWorld);
 
-				object = intersection.object;
+				var object = intersection.object;
 				object.matrix.premultiply(tempMatrix);
 				object.matrix.decompose(object.position, object.quaternion, object.scale);
 				object.material.emissive.b = 1;
@@ -784,35 +206,31 @@
 
 		function onSelectEnd(event) {
 
-			controller = event.target;
-
+			var controller = event.target;
 
 			if (controller.userData.selected !== undefined) {
 
-				object = controller.userData.selected;
+				var object = controller.userData.selected;
 				object.matrix.premultiply(controller.matrixWorld);
 				object.matrix.decompose(object.position, object.quaternion, object.scale);
-
-
 				object.material.emissive.b = 0;
-				scene.add(object);
-				//push to array
-				allObjects.push(object);
+				group.add(object);
 
 				controller.userData.selected = undefined;
 
 			}
+
+
 		}
 
 		function getIntersections(controller) {
 
 			tempMatrix.identity().extractRotation(controller.matrixWorld);
 
-			raycasterForController.ray.origin.setFromMatrixPosition(controller.matrixWorld);
-			raycasterForController.ray.direction.set(0, 0, - 1).applyMatrix4(tempMatrix);
+			raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+			raycaster.ray.direction.set(0, 0, - 1).applyMatrix4(tempMatrix);
 
-			return raycasterForController.intersectObjects(allObjects);
-
+			return raycaster.intersectObjects(group.children);
 
 		}
 
@@ -823,16 +241,15 @@
 			if (controller.userData.selected !== undefined) return;
 
 			var line = controller.getObjectByName('line');
-			intersections = getIntersections(controller);
+			var intersections = getIntersections(controller);
 
-			if (intersections.length > 1) {
+			if (intersections.length > 0) {
 
-				intersection = intersections[1];
+				var intersection = intersections[0];
 
-				object = intersection.object;
-				//object.material.emissive.r = 1;
+				var object = intersection.object;
+				object.material.emissive.r = 1;
 				intersected.push(object);
-				//console.log(object);
 
 				line.scale.z = intersection.distance;
 
@@ -846,326 +263,35 @@
 
 		function cleanIntersected() {
 
-			try {
+			while (intersected.length) {
 
-				while (intersected.length) {
+				var object = intersected.pop();
+				object.material.emissive.r = 0;
 
-					object = intersected.pop();
-					object.material.emissive.r = 0;
-
-				}
-			} catch{ }
-			finally { }
+			}
 
 		}
 
+		//
 
-		//highlight the two selected objects               
-		function updateColorOfSelectedObject() {
-
-			//reset all colors
-			resetColorOfObjects();
-
-			//set new color to selected object 1 + 2
-			for (var i = 0; i < selectedObj.length; i++) {
-
-				//for element 1 + 2 in array set color
-				if (i < 2) {
-					selectedObj[i].material.color = HighlightColor;
-				}
-			}
-
-			// cut selectedObj to two objects
-			if (selectedObj.length >= 2) {
-				var slice = []
-				slice = selectedObj.slice(0, 2)
-				selectedObj = slice;
-			}
-		}
-
-
-		//-------------------------------------------------------------------------
-		//function to connect two objects with a line------------------------------
-		//-------------------------------------------------------------------------
-
-		//requires two objects as input
-		function connect(obj1, obj2) {
-			//create a blue LineBasicMaterial
-			material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-
-
-			points.push(obj1.position);
-			points.push(obj2.postion);
-
-			//define Geometry
-			geometry = new THREE.Geometry();
-			geometry.vertices.push(obj1.position, obj2.position);
-
-			//define Line
-			line = new THREE.Line(geometry, material);
-			scene.add(line);
-			lines.push([line, obj1, obj2]);
-			writeStringToCanvas('connected objects ' + obj1.name + ' and ' + obj2.name);
-
-		}
-
-		//-------------------------------------------------------------------------
-		//function to disconnect two objects with a line---------------------------
-		//-------------------------------------------------------------------------
-		function disconnect(obj1, obj2) {
-
-
-			for (var i = 0; i < lines.length; i++) {
-
-				if ((lines[i][1] == obj1 && lines[i][2] == obj2) || (lines[i][2] == obj1 && lines[i][1] == obj2)) {
-					//delete line
-					try {
-						scene.remove(lines[i][0]);
-						lines[i].pop(2);
-						lines[i].pop(1);
-						lines[i].pop(0);
-						lines.splice(i, 1);
-
-						writeStringToCanvas('disconnected objects ' + obj1.name + ' and ' + obj2.name);
-						break;
-					}
-					catch{ }
-				}
-			}
-		}
-
-		//this function updates all the lines in the global array "lines"
-		//the function removes the old line and adds a new line with the new position
-		//called in update function
-		function updateLines() {
-			for (var i = 0; i < lines.length; i++) {
-
-				//if a array entry is undefined, delete it
-				if (lines[i] == undefined) {
-					lines.splice(i, 1);
-					i = 0;
-					break;
-				}
-
-				//console.log(lines);
-				var line = lines[i][0];
-				var obj1 = lines[i][1];
-				var obj2 = lines[i][2];
-				//var vertices = [obj1.position, obj2.position];
-				//line.vertices = vertices;
-
-				scene.remove(line);
-
-				//define new material
-				material = new THREE.LineBasicMaterial({ color: 0x0000ff });
-
-
-				//define Geometry
-				geometry = new THREE.Geometry();
-				geometry.vertices.push(obj1.position, obj2.position);
-
-				//define Line
-				lines[i][0] = new THREE.Line(geometry, material);
-				scene.add(lines[i][0]);
-
-			}
-		}
-
-		//function to print help to log
-		function printHelp() {
-			//show help notes
-			writeStringToCanvas('-------------------------------------------------');
-			writeStringToCanvas('Help: say help');
-			writeStringToCanvas('selection: click on element to select it');
-			writeStringToCanvas('set name: say: set name to *');
-			writeStringToCanvas('connect: select two elements and say: connect');
-			writeStringToCanvas('disconnect: select two elements and say: disconnect');
-			writeStringToCanvas('insert: say: insert entity/relation/attribute');
-			writeStringToCanvas('delete: select object and say delete');
-			writeStringToCanvas('-------------------------------------------------');
-		}
-
-
-
-		//--------------------------------------------------------------------
-		//set up annyang
-		//--------------------------------------------------------------------
-
-		if (annyang) {
-
-			// define the functions our commands will run.
-
-			var setNameTo = function (tag) {
-				writeStringToCanvas('command was: set name to ' + tag);
-				setName(tag, selectedObj[0]);
-			};
-
-
-			var connectWithLine = function () {
-				//console.log(selectedObj);       
-
-				writeStringToCanvas('command was: Connect');
-				connect(selectedObj[0], selectedObj[1]);
-
-
-				//reset color before empty
-				resetColorOfObjects();
-
-				selectedObj = [];
-			};
-
-
-			var disconnectObj = function () {
-				//console.log(selectedObj);       
-
-				writeStringToCanvas('command was: Disconnect');
-				disconnect(selectedObj[0], selectedObj[1]);
-
-				//reset color before empty
-				resetColorOfObjects();
-
-				selectedObj = [];
-			};
-
-			var help = function () {
-				printHelp();
-			}
-
-			var AnnyangInsertAttribute = function () {
-				insertAttribute();
-				writeStringToCanvas('command was: insert attribute');
-			}
-
-			var AnnyangInsertEntity = function () {
-				insertEntity();
-				writeStringToCanvas('command was: insert entity');
-			}
-
-			var AnnyangInsertRelation = function () {
-				insertRelation();
-				writeStringToCanvas('command was: insert relation');
-			}
-
-			var AnnyangDeleteObject = function () {
-				deleteObject();
-				writeStringToCanvas('command was: delete');
-			}
-
-			// define our commands.
-			// * The key is the phrase you want your users to say.
-			// * The value is the action to do.
-			//   You can pass a function, a function name (as a string), or write your function as part of the commands object.
-			var commands = {
-				'set name to *search': setNameTo,
-				'connect': connectWithLine,
-				'disconnect': disconnectObj,
-				'help': help,
-				'insert attribute': AnnyangInsertAttribute,
-				'insert entity': AnnyangInsertEntity,
-				'insert relation': AnnyangInsertRelation,
-				'delete': AnnyangDeleteObject
-			};
-
-			// OPTIONAL: activate debug mode for detailed logging in the console
-			//annyang.debug();
-
-			// Add voice commands to respond to
-			annyang.addCommands(commands);
-
-			// OPTIONAL: Set a language for speech recognition (defaults to English)
-			// For a full list of language codes, see the documentation:
-			// https://github.com/TalAter/annyang/blob/master/docs/FAQ.md#what-languages-are-supported
-			annyang.setLanguage('en');
-
-			// Start listening. You can call this here, or attach this call to an event, button, etc.
-			annyang.start();
-
-		} else {
-			$(document).ready(function () {
-				$('#unsupported').fadeIn('fast');
-			});
-		}
-
-		//function to log to canvas the different possibilities when speech recognized
-		annyang.addCallback('result', function (phrases) {
-
-			var splitArray = phrases.toString().split(",");
-			writeStringToCanvas('-------------------------------------------');
-			writeStringToCanvas('Speech recognized. Possible sentences said:');
-			for (var i = 0; i < splitArray.length; i++) {
-				writeStringToCanvas(splitArray[i]);
-			}
-			writeStringToCanvas('-------------------------------------------');
-		});
-
-		// end of annyang set up ------------------------------------------------------
-
-
-
-
-		//------------------------------------------------------------------------
-		// definition of game logic///////////////////////////////////////////////
-		//------------------------------------------------------------------------
-
-		//run GameLoop (update, render, repeat) ----------------------------------
-		var GameLoop = function () {
-			requestAnimationFrame(GameLoop);
-
-			user.position.copy(camera.position);
-			
-
-			update();
-			render();
-
-		};
-
-
-		//------------------------------------------------------------------------------
-		// UPDATE function    
-		//------------------------------------------------------------------------------
-		var update = function () {
-
-			//checke after every 200 ms
-			if (performance.now() > clock && performance.now() > 2000) {
-				console.table(lines);
-				clock = clock + 800;
-			}
-
-			updateLines();
-			
-
-		};
-
-
-		//-----------------------------------------------------------------------------
-		// ANIMATE function
-		//-----------------------------------------------------------------------------
 		function animate() {
+
 			renderer.setAnimationLoop(render);
+
 		}
 
+		function render() {
 
-		//------------------------------------------------------------------------------
-		// RENDER function
-		//------------------------------------------------------------------------------
-		var render = function () {
+			cleanIntersected();
+
+			intersectObjects(controller1);
+			intersectObjects(controller2);
+
 			renderer.render(scene, camera);
-		};
-		//----------------------------------------------------------------------------
 
-
-
-		// call
-		animate();
-		GameLoop();
-
+		}
 
 	</script>
-
-	<!--canvas for log to image function-->
-	<canvas id="myCanvas" width="578" height="200"></canvas>
-
-
 </body>
 
 <div id="svgContainer" style="width: 222px; height: 222px;">
