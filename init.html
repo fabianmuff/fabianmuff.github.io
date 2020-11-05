@@ -187,12 +187,16 @@
         function update() {
 
           
-
             
-
+            
             cube.rotation.x += 0.002;
             cube.rotation.y += 0.001;
             cube.rotation.z += 0.003
+
+            
+            requestAnimationFrame(animate);
+            
+            
             
         }
 
@@ -200,7 +204,7 @@
 
 
             renderer.setAnimationLoop(render);
-            requestAnimationFrame(animate);
+            
 
 
         }
