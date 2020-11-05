@@ -164,7 +164,7 @@
 				svg = new THREE.Mesh(geometry, material);
 				svg.position.x = 0;
 				svg.position.y = 0;
-				svg.position.z = 0;
+				svg.position.z = -2;
                 svg.name = "svg";
 
 				scene.add(svg);
@@ -206,6 +206,7 @@
                     
 
 					group.add( object );
+                    
 
 				}
 
@@ -343,8 +344,8 @@
 		function animate() {
 
 			renderer.setAnimationLoop(render);
-            scene.getObjectByName("svg").lookAt(camera);
-
+            console.log(scene.children);
+            camera.position.set(-0.1, 0.16, 30.0);
 		}
 
 		function render() {
@@ -356,6 +357,7 @@
 			intersectObjects(controller2);
 
 			renderer.render(scene, camera);
+            //scene.rotation.x += 0.01;
             
 
 
