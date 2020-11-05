@@ -151,6 +151,7 @@
 
 			var img = document.createElement("img");
 			img.setAttribute("src", "data:image/svg+xml;base64," + window.btoa(unescape(encodeURIComponent(svgData))));
+            //img.setAttribute("src", "mini.png");
 
 			img.onload = function () {
 				ctx.drawImage(img, 0, 0);
