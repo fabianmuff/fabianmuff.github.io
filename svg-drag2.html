@@ -137,13 +137,14 @@
 
 
             var loader = new THREE.TextureLoader();
-            loader.load("mini.png", texture => {
+            loader.load("small4_opt.png", texture => {
                 //create the sphere
-                const sphere = new THREE.BoxGeometry(2.0, 5.00, 0.01);
+                const sphere = new THREE.BoxGeometry(6993 / 2000, 5126 / 2000, 0.01);
+                
                 //map the texture to the material. Read more about materials in three.js docs
                 const material = new THREE.MeshPhongMaterial({
                     map: texture,
-                    overdraw: 0.5
+                    overdraw: 0.5,
                 });
 
                 //create a new mesh with sphere geometry.
@@ -153,7 +154,7 @@
                 mesh.position.x = 0;
                 mesh.position.y = 0;
                 mesh.position.z = -2;
-                scene.add(mesh);
+                group.add(mesh);
                 
             });
 
@@ -175,7 +176,7 @@
                     roughness: 0.7,
                     metalness: 0.0
                 });
-                
+
 
                 var object = new THREE.Mesh(geometry, material);
 
