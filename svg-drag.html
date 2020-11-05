@@ -167,7 +167,7 @@
 				svg.position.z = -2;
                 svg.name = "svg";
 
-				//scene.add(svg);
+				scene.add(svg);
 
 
 			};
@@ -206,31 +206,12 @@
 					object.receiveShadow = true;
                     
 
-					//group.add( object );
+					group.add( object );
                     
-
 
 				}
 
-                var loader = new THREE.TextureLoader();
-    loader.load("export.svg", texture => {
-      //create the sphere
-      const sphere = new THREE.BoxGeometry(2.0, 5.00, 0.01);
-      //map the texture to the material. Read more about materials in three.js docs
-      const material = new THREE.MeshBasicMaterial({
-        map: texture,
-        overdraw: 0.5
-      });
 
-      //create a new mesh with sphere geometry.
-      const mesh = new THREE.Mesh(sphere, material);
-
-      //add mesh to globe group
-      mesh.position.x = 0;
-				mesh.position.y = 0;
-				mesh.position.z = -2;
-      scene.add(mesh);
-    });
 
 
 
