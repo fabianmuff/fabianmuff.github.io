@@ -38,13 +38,16 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
+        
+
         renderer.outputEncoding = THREE.sRGBEncoding;
-			renderer.shadowMap.enabled = true;
+		renderer.shadowMap.enabled = true;
+
+
 
         //add webxr support
-        //document.body.appendChild(VRButton.createButton(renderer));
-        document.body.appendChild(ARButton.createButton(renderer));
-        renderer.xr.enabled = true;
+			document.body.appendChild( ARButton.createButton( renderer ) );
+			renderer.xr.enabled = true;
 
 
         var svg = document.getElementById("svgContainer").querySelector("svg");
