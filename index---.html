@@ -140,7 +140,7 @@
             var texture = new THREE.Texture(canvas);
             texture.needsUpdate = true;
 
-            const geometry = new THREE.PlaneGeometry(5, 20, 32);
+            const geometry = new THREE.PlaneGeometry(50, 200, 320);
             var material = new THREE.MeshBasicMaterial({ map: texture });
             material.map.minFilter = THREE.LinearFilter;
             mesh = new THREE.Mesh(geometry, material);
