@@ -136,6 +136,27 @@
 
 
 
+            var loader = new THREE.TextureLoader();
+            loader.load("export.svg", texture => {
+                //create the sphere
+                const sphere = new THREE.BoxGeometry(2.0, 5.00, 0.01);
+                //map the texture to the material. Read more about materials in three.js docs
+                const material = new THREE.MeshPhongMaterial({
+                    map: texture,
+                    overdraw: 0.5
+                });
+
+                //create a new mesh with sphere geometry.
+                const mesh = new THREE.Mesh(sphere, material);
+
+                //add mesh to globe group
+                mesh.position.x = 0;
+                mesh.position.y = 0;
+                mesh.position.z = -2;
+                group.add(mesh);
+                
+            });
+
 
 
             var geometries = [
@@ -177,49 +198,11 @@
 
             }
 
-            var loader = new THREE.TextureLoader();
-            loader.load("export.svg", texture => {
-                //create the sphere
-                const sphere = new THREE.BoxGeometry(2.0, 5.00, 0.01);
-                //map the texture to the material. Read more about materials in three.js docs
-                const material = new THREE.MeshPhongMaterial({
-                    map: texture,
-                    overdraw: 0.5
-                });
-
-                //create a new mesh with sphere geometry.
-                const mesh = new THREE.Mesh(sphere, material);
-
-                //add mesh to globe group
-                mesh.position.x = 0;
-                mesh.position.y = 0;
-                mesh.position.z = -2;
-                group.add(mesh);
-                mesh.rotation.y+=0.5;
-            });
+            
 
 
 
-            // -----------------------------------------------
-            // lights
-            //-----------------------------------------------
-            var light = new THREE.PointLight(0xffffff);
-            light.position.set(0, 190, 80);
-            scene.add(light);
-
-            var light1 = new THREE.PointLight(0xffffff, 2, 50);
-            light1.position.set(camera.position);
-            light1.position.z = light1.position.z + 3;
-            scene.add(light1);
-
-            var light2 = new THREE.PointLight(0xffffff, 2, 50);
-            light2.position.x = 0;
-            light2.position.y = 0
-            light2.position.z = 16;
-            scene.add(light2);
-
-            var ambience = new THREE.AmbientLight(0x666666);
-            scene.add(ambience);
+          
 
 
         }
