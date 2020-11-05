@@ -142,7 +142,7 @@
                 const sphere = new THREE.BoxGeometry(6993 / 2000, 5126 / 2000, 0.01);
                 
                 //map the texture to the material. Read more about materials in three.js docs
-                const material = new THREE.MeshPhongMaterial({
+                const material = new THREE.MeshBasicMaterial({
                     map: texture,
                     overdraw: 0.5,
                 });
@@ -229,7 +229,12 @@
                 var object = intersection.object;
                 object.matrix.premultiply(tempMatrix);
                 object.matrix.decompose(object.position, object.quaternion, object.scale);
-                object.material.emissive.b = 1;
+                try {
+                object.material.emissive.b = 1;    
+                } catch (error) {
+                    
+                }
+                
                 controller.add(object);
 
                 controller.userData.selected = object;
@@ -247,7 +252,12 @@
                 var object = controller.userData.selected;
                 object.matrix.premultiply(controller.matrixWorld);
                 object.matrix.decompose(object.position, object.quaternion, object.scale);
-                object.material.emissive.b = 0;
+                try {
+                     object.material.emissive.b = 0;
+                } catch (error) {
+                    
+                }
+               
                 group.add(object);
 
                 controller.userData.selected = undefined;
@@ -282,7 +292,12 @@
                 var intersection = intersections[0];
 
                 var object = intersection.object;
-                object.material.emissive.r = 1;
+                try {
+                object.material.emissive.r = 1;    
+                } catch (error) {
+                    
+                }
+                
                 intersected.push(object);
 
                 line.scale.z = intersection.distance;
@@ -300,7 +315,12 @@
             while (intersected.length) {
 
                 var object = intersected.pop();
-                object.material.emissive.r = 0;
+                try {
+                object.material.emissive.r = 0;    
+                } catch (error) {
+                    
+                }
+                
 
             }
 
