@@ -49,7 +49,7 @@
 			// scene.background = new THREE.Color( 0x808080 );
 
 			camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 0.1, 1000);
-			camera.position.set(-0.01, 0.016, 3.00);
+			camera.position.set(-0.1, 0.16, 30.0);
 
 			controls = new OrbitControls(camera, container);
 			controls.target.set(0, 1.6, 0);
@@ -165,8 +165,9 @@
 				svg.position.x = 0;
 				svg.position.y = 0;
 				svg.position.z = 0;
+                svg.name = "svg";
 
-				group.add(svg);
+				scene.add(svg);
 
 			};
 
@@ -202,6 +203,7 @@
 
 					object.castShadow = true;
 					object.receiveShadow = true;
+                    
 
 					group.add( object );
 
@@ -341,7 +343,7 @@
 		function animate() {
 
 			renderer.setAnimationLoop(render);
-            
+            scene.getObjectByName("svg").lookAt(camera);
 
 		}
 
@@ -354,6 +356,7 @@
 			intersectObjects(controller2);
 
 			renderer.render(scene, camera);
+            
 
 
 		}
