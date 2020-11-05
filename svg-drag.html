@@ -158,7 +158,7 @@
 				var texture = new THREE.Texture(canvas);
 				texture.needsUpdate = true;
 
-				const geometry = new THREE.BoxBufferGeometry(5.0, 2.00, 3.20);
+				const geometry = new THREE.BoxGeometry(2.0, 5.00, 0.01);
 				var material = new THREE.MeshBasicMaterial({ map: texture });
 				material.map.minFilter = THREE.LinearFilter;
 				svg = new THREE.Mesh(geometry, material);
