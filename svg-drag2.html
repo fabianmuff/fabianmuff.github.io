@@ -137,7 +137,7 @@
 
 
             var loader = new THREE.TextureLoader();
-            loader.load("export.svg", texture => {
+            loader.load("mini.png", texture => {
                 //create the sphere
                 const sphere = new THREE.BoxGeometry(2.0, 5.00, 0.01);
                 //map the texture to the material. Read more about materials in three.js docs
@@ -153,7 +153,7 @@
                 mesh.position.x = 0;
                 mesh.position.y = 0;
                 mesh.position.z = -2;
-                group.add(mesh);
+                scene.add(mesh);
                 
             });
 
