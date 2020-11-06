@@ -139,7 +139,7 @@
             var loader = new THREE.TextureLoader();
             loader.load("crop.png", texture => {
                 //create the sphere
-                const sphere = new THREE.BoxGeometry(2473 / 16000 * 2, 2415 / 16000 *2, 0.01);
+                const sphere = new THREE.BoxGeometry(2473 / 16000 * 4, 2415 / 16000 *4, 0.01);
 
                 //map the texture to the material. Read more about materials in three.js docs
                 const material = new THREE.MeshBasicMaterial({
