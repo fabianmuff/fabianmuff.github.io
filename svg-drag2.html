@@ -139,7 +139,7 @@
             var loader = new THREE.TextureLoader();
             loader.load("mog.png", texture => {
                 //create the sphere
-                const sphere = new THREE.BoxGeometry(3986 / 16000 * 4, 2893 / 16000 *4, 0.01);
+                const sphere = new THREE.BoxGeometry(3986 / 16000 * 8, 2893 / 16000 *8, 0.01);
 
                 //map the texture to the material. Read more about materials in three.js docs
                 const material = new THREE.MeshBasicMaterial({
