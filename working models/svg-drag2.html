@@ -137,7 +137,7 @@
 
 
             var loader = new THREE.TextureLoader();
-            loader.load("final.png", texture => {
+            loader.load("small4_opt.png", texture => {
                 //create the sphere
                 const sphere = new THREE.BoxGeometry(6993 / 16000, 5126 / 16000, 0.01);
 
@@ -148,7 +148,7 @@
                     //opacity: 0.5,
                     transparent: true,
                     alphaTest: 0.5,
-                    side: THREE.SingleSide,
+                    side: THREE.DoubleSide,
                     
 
                 });
