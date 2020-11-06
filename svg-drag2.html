@@ -137,7 +137,7 @@
 
 
             var loader = new THREE.TextureLoader();
-            loader.load("crop.png", texture => {
+            loader.load("crop_blue.png", texture => {
                 //create the sphere
                 const sphere = new THREE.BoxGeometry(3986 / 16000 * 4, 3893 / 16000 * 4, 0.01);
 
@@ -148,7 +148,7 @@
                     //opacity: 0.5,
                     transparent: true,
                     alphaTest: 0.5,
-                    side: THREE.SingleSide,
+                    //side: THREE.SingleSide,
                     
 
                 });
