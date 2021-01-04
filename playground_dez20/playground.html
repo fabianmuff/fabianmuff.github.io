@@ -163,7 +163,7 @@
 			controller1 = renderer.xr.getController(0);
 			controller1.addEventListener('selectstart', onSelectStart);
 			controller1.addEventListener('selectend', onSelectEnd);
-			
+
 
 
 
@@ -762,12 +762,10 @@
 
 		function onSelectEnd(event) {
 
-			console.log('in select end');
 			controller = event.target;
 
-
 			if (controller.userData.selected !== undefined) {
-
+				console.log('controller.userData.selected !== undefined');
 				object = controller.userData.selected;
 				object.matrix.premultiply(controller.matrixWorld);
 				object.matrix.decompose(object.position, object.quaternion, object.scale);
