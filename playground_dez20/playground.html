@@ -733,7 +733,7 @@
 
 			controller = event.target;
 
-			
+
 			intersections = undefined;
 			intersections = getIntersections(controller);
 
@@ -768,7 +768,7 @@
 			controller = event.target;
 
 			if (controller.userData.selected !== undefined) {
-				console.log('controller.userData.selected !== undefined');
+				console.log('controller.userData.selected !== ' + controller.userData.selected );
 				object = controller.userData.selected;
 				object.matrix.premultiply(controller.matrixWorld);
 				object.matrix.decompose(object.position, object.quaternion, object.scale);
