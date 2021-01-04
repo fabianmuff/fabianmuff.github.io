@@ -737,7 +737,6 @@
 			controller = undefined;
 			controller = event.target;
 
-
 			intersections = undefined;
 			intersections = getIntersections(controller);
 
@@ -789,12 +788,19 @@
 			object = undefined;
 			try{
 				controller.userData.selected = undefined;
+			} 
+			catch{} 
+			finally{}
+
+			try{
 				controller.pop(object);
 			} 
 			catch{} 
 			finally{}
+
 			intersection = undefined;
 			cleanIntersected();
+			
 			
 
 		}
