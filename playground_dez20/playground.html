@@ -731,6 +731,7 @@
 
 		function onSelectStart(event) {
 
+			controller = undefined;
 			controller = event.target;
 
 
@@ -766,6 +767,7 @@
 
 		function onSelectEnd(event) {
 
+			controller = undefined;
 			controller = event.target;
 
 			if (controller.userData.selected !== undefined) {
