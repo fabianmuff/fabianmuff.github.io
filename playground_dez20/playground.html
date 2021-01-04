@@ -788,12 +788,14 @@
 
 			controller = undefined;
 			object = undefined;
-			try{controller.userData.selected = undefined;} 
+			try{
+				controller.userData.selected = undefined;
+				controller.pop(object);} 
 			catch{} 
 			finally{}
 			intersection = undefined;
 			cleanIntersected();
-			controller.pop(object);
+			
 
 		}
 
