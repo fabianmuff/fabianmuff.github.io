@@ -179,9 +179,9 @@
 			user.add(controllerGrip1);
 
 			//add visual representation of controller 2 to scene
-			controllerGrip2 = renderer.xr.getControllerGrip(1);
-			controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
-			user.add(controllerGrip2);
+			//controllerGrip2 = renderer.xr.getControllerGrip(1);
+			//controllerGrip2.add(controllerModelFactory.createControllerModel(controllerGrip2));
+			//user.add(controllerGrip2);
 
 			//create vector for raycaster line
 			geometry = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0, - 100)]);
@@ -191,7 +191,7 @@
 
 			//add raycaster lines to controllers
 			controller1.add(line.clone());
-			controller2.add(line.clone());
+			//controller2.add(line.clone());
 
 			raycasterForController = new THREE.Raycaster();
 			tempMatrix = new THREE.Matrix4();
