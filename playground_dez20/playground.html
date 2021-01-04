@@ -161,8 +161,12 @@
 
 			//init controller1 and add to user
 			controller1 = renderer.xr.getController(0);
-			controller1.addEventListener('selectstart', onSelectStart);
-			controller1.addEventListener('selectend', onSelectEnd);
+			//controller1.addEventListener('selectstart', onSelectStart);
+			//controller1.addEventListener('selectend', onSelectEnd);
+
+			controller1.addEventListener('touchstart', onSelectStart);
+			controller1.addEventListener('touchend', onSelectEnd);
+
 			user.add(controller1);
 
 			//init controller2 and add to user
