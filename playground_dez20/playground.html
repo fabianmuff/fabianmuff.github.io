@@ -773,16 +773,16 @@
 				object = controller.userData.selected;
 				object.matrix.premultiply(controller.matrixWorld);
 				object.matrix.decompose(object.position, object.quaternion, object.scale);
-
+				console.log('decomposed');
 
 				object.material.emissive.b = 0;
 				scene.add(object);
 				//push to array
 				allObjects.push(object);
-
+				console.log('pushed to all objects');
 				//reset controller
 				controller.userData.selected = undefined;
-
+				console.log('controller.userDate reseted');
 
 				
 
