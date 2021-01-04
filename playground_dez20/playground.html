@@ -741,7 +741,7 @@
 			intersections = undefined;
 			intersections = getIntersections(controller);
 
-			if (intersections.length = 0) {
+			if (intersections.length > 0) {
 
 				intersection = undefined;
 				intersection = intersections[0];
@@ -773,7 +773,7 @@
 
 			controller = event.target;
 
-			if (controller.userData.selected !== undefined) {
+			if (object !== undefined) {
 				object = controller.userData.selected;
 				object.matrix.premultiply(controller.matrixWorld);
 				object.matrix.decompose(object.position, object.quaternion, object.scale);
@@ -790,7 +790,8 @@
 			object = undefined;
 			try{
 				controller.userData.selected = undefined;
-				controller.pop(object);} 
+				//controller.pop(object);
+			} 
 			catch{} 
 			finally{}
 			intersection = undefined;
