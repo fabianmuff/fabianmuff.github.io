@@ -758,8 +758,6 @@
 
 				controller.userData.selected = object;
 
-				object = undefined ;
-
 			}
 
 		}
@@ -780,7 +778,9 @@
 				//push to array
 				allObjects.push(object);
 
-				controller.userData.selected = undefined;
+				controller = undefined;
+
+
 			}
 		}
 
