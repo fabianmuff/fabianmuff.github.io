@@ -729,7 +729,7 @@
 		//controller functions
 		//----------------------------------------------------------------------------
 
-		
+
 		function onSelectStart(event) {
 
 			cleanIntersected();
@@ -793,6 +793,7 @@
 			finally{}
 			intersection = undefined;
 			cleanIntersected();
+			controller.pop(object);
 
 		}
 
