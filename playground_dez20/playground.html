@@ -746,7 +746,9 @@
 				//update color of selected
 				updateColorOfSelectedObject();
 
-				tempMatrix.getInverse(controller.matrixWorld);
+				// old inversion
+				//tempMatrix.getInverse(controller.matrixWorld);
+				tempMatrix.copy( controller.matrixWorld ).invert();
 
 				object = intersection.object;
 				object.matrix.premultiply(tempMatrix);
