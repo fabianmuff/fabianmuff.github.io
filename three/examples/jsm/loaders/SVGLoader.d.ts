@@ -27,6 +27,7 @@ export class SVGLoader extends Loader {
 	defaultUnit: string;
 
 	load( url: string, onLoad: ( data: SVGResult ) => void, onProgress?: ( event: ProgressEvent ) => void, onError?: ( event: ErrorEvent ) => void ) : void;
+	loadAsync( url: string, onProgress?: ( event: ProgressEvent ) => void ): Promise<SVGResult>;
 	parse( text: string ) : SVGResult;
 
 	static getStrokeStyle( width?: number, color?: string, lineJoin?: string, lineCap?: string, miterLimit?: number ): StrokeStyle;

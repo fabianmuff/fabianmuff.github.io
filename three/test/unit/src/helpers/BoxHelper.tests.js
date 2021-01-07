@@ -2,8 +2,8 @@
 
 import { runStdGeometryTests } from '../../utils/qunit-utils';
 import { BoxHelper } from '../../../../src/helpers/BoxHelper';
-import { BoxGeometry } from '../../../../src/geometries/BoxGeometry';
-import { SphereGeometry } from '../../../../src/geometries/SphereGeometry';
+import { BoxBufferGeometry } from '../../../../src/geometries/BoxBufferGeometry';
+import { SphereBufferGeometry } from '../../../../src/geometries/SphereBufferGeometry';
 import { Mesh } from '../../../../src/objects/Mesh';
 
 export default QUnit.module( 'Helpers', () => {
@@ -13,23 +13,13 @@ export default QUnit.module( 'Helpers', () => {
 		var geometries = undefined;
 		hooks.beforeEach( function () {
 
-			const parameters = {
-				radius: 10,
-				widthSegments: 20,
-				heightSegments: 30,
-				phiStart: 0.5,
-				phiLength: 1.0,
-				thetaStart: 0.4,
-				thetaLength: 2.0,
-			};
-
 			// Test with a normal cube and a box helper
-			var boxGeometry = new BoxGeometry( parameters.diameter );
+			var boxGeometry = new BoxBufferGeometry();
 			var box = new Mesh( boxGeometry );
 			var boxHelper = new BoxHelper( box );
 
 			// The same should happen with a comparable sphere
-			var sphereGeometry = new SphereGeometry( parameters.diameter / 2 );
+			var sphereGeometry = new SphereBufferGeometry();
 			var sphere = new Mesh( sphereGeometry );
 			var sphereBoxHelper = new BoxHelper( sphere );
 
